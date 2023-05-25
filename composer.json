@@ -1,0 +1,37 @@
+{
+    "name": "signaturetech/laravel-api-response-builder",
+    "description": "A super simple package allowing for consistent API responses throughout your Laravel application",
+    "license": "MIT",
+    "minimum-stability": "dev",
+    "authors": [
+        {
+            "name": "Prem Chand Saini",
+            "email": "prem@signaturetech.in"
+        }
+    ],
+    "require": {
+        "php": ">=8.0",
+        "laravel/framework": ">= 9.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "8.*",
+        "phpunit/phpunit": "10.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "SignatureTech\\ResponseBuilder\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "SignatureTech\\ResponseBuilder\\Tests\\": "tests"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "SignatureTech\\ResponseBuilder\\ResponseBuilderServiceProvider"
+            ]
+        }
+    }
+}

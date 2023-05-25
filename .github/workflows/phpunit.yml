@@ -1,0 +1,38 @@
+#
+#  Laravel API Response Builder Unit Test Cases
+#  Prem Chand Saini
+#
+
+name: "Unit Tests"
+
+on:
+  push:
+    branches:
+    - "master"
+  pull_request:
+    branches:
+    - "master"
+    - "dev"
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "Checkout repository..."
+        uses: actions/checkout@v2
+
+      # https://github.com/marketplace/actions/composer-php-actions
+      - name: "Installing dependencies..."
+        uses: php-actions/composer@v6
+        with:
+          version: 2
+          php_version: "8.1"
+          dev: yes
+
+      # https://github.com/marketplace/actions/phpunit-php-actions
+      - name: "Running PHPUnit..."
+        uses: php-actions/phpunit@v3
+        with:
+          bootstrap: "vendor/autoload.php"
+          configuration: "phpunit.xml"
