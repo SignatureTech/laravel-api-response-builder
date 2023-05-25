@@ -25,12 +25,9 @@ class ResponseBuilderTest extends TestCase
 
         $res = json_decode($res->getContent());
 
-        $this->assertObjectHasAttribute('status', $res);
         $this->assertIsBool(true, $res->status);
-        $this->assertObjectHasAttribute('data', $res);
         $this->assertEquals($data['name'], $res->data->name);
         $this->assertEquals($data['email'], $res->data->email);
-        $this->assertObjectHasAttribute('message', $res);
         $this->assertEquals($message, $res->message);
     }
 
@@ -45,9 +42,37 @@ class ResponseBuilderTest extends TestCase
 
         $res = json_decode($res->getContent());
 
-        $this->assertObjectHasAttribute('status', $res);
         $this->assertIsBool(false, $res->status);
-        $this->assertObjectHasAttribute('message', $res);
+        $this->assertEquals($message, $res->message);
+    }
+
+    public function test_success_with_additional_data(): void
+    {
+        $httpOk = Response::HTTP_OK;
+
+        $data = [
+            'name' => 'Prem Chand Saini',
+            'email' => 'premchandsaini779@gmail.com'
+        ];
+
+        $token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
+
+        $message = 'Getting the user details';
+
+        $res = ResponseBuilder::asSuccess()
+            ->withMessage($message)
+            ->with('auth_token', $token)
+            ->withData($data)
+            ->build();;
+
+        $this->assertEquals($httpOk, $res->status());
+
+        $res = json_decode($res->getContent());
+
+        $this->assertIsBool(true, $res->status);
+        $this->assertEquals($data['name'], $res->data->name);
+        $this->assertEquals($data['email'], $res->data->email);
+        $this->assertEquals($token, $res->auth_token);
         $this->assertEquals($message, $res->message);
     }
 }
