@@ -117,7 +117,7 @@ class ResponseBuilder
      * @param LengthAwarePaginator $query
      * @return $this
      */
-    public function withPagination(LengthAwarePaginator $resource, $resourceNamespace = null): self
+    public function withPagination(LengthAwarePaginator $resource, $resourceNamespace = null, $objectName = null): self
     {
         $this->meta = [
             'total_page' => $resource->lastPage(),
@@ -132,12 +132,18 @@ class ResponseBuilder
         ];
 
         if (!empty($resourceNamespace)) {
-            $this->data =
+            $data =
                 $resource instanceof LengthAwarePaginator || $resource instanceof Collection
                 ? $resourceNamespace::collection($resource)
                 : $resourceNamespace::make($resource);
         } else {
-            $this->data = $resource->items();
+            $data = $resource->items();
+        }
+
+        if (!empty($objectName)) {
+            $this->data[$objectName] = $data;
+        } else {
+            $this->data = $data;
         }
 
         return $this;
