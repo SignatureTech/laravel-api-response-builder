@@ -117,7 +117,7 @@ class ResponseBuilder
      * @param LengthAwarePaginator $query
      * @return $this
      */
-    public function withPagination(LengthAwarePaginator $resource, $resourceNamespace = null, $objectName = null): self
+    public function withPagination(LengthAwarePaginator $resource, $resourceNamespace = null, $objectName = null, $additional = null): self
     {
         $this->meta = [
             'total_page' => $resource->lastPage(),
@@ -144,6 +144,10 @@ class ResponseBuilder
             $this->data[$objectName] = $data;
         } else {
             $this->data = $data;
+        }
+
+        if (!empty($additional)) {
+            $this->data = array_merge($this->data, $additional);
         }
 
         return $this;
