@@ -123,7 +123,7 @@ class ResponseBuilder
             'total_page' => $resource->lastPage(),
             'current_page' => $resource->currentPage(),
             'total_item' => $resource->total(),
-            'per_page' => (int)$resource->perPage(),
+            'per_page' => (int) $resource->perPage(),
         ];
 
         $this->link = [
@@ -131,23 +131,16 @@ class ResponseBuilder
             'prev' => boolval($resource->previousPageUrl())
         ];
 
-        if (!empty($resourceNamespace)) {
-            $data =
-                $resource instanceof LengthAwarePaginator || $resource instanceof Collection
+        $data = $resourceNamespace
+            ? ($resource instanceof LengthAwarePaginator || $resource instanceof Collection
                 ? $resourceNamespace::collection($resource)
-                : $resourceNamespace::make($resource);
-        } else {
-            $data = $resource->items();
-        }
+                : $resourceNamespace::make($resource))
+            : $resource->items();
 
-        if (!empty($objectName)) {
-            $this->data[$objectName] = $data;
-        } else {
-            $this->data = $data;
-        }
+        $this->data = $objectName ? [$objectName => $data] : $data;
 
         if (!empty($additional)) {
-            $this->data = array_merge($this->data, $additional);
+            $this->data = array_merge((array) $this->data, $additional);
         }
 
         return $this;
@@ -212,6 +205,43 @@ class ResponseBuilder
                 return $builder;
             })
             ->build();
+    }
+
+    /**
+     * @param string|null $message
+     * @return Response
+     */
+    public static function notFound(?string $message = 'Resource not found'): Response
+    {
+        return self::error($message, Response::HTTP_NOT_FOUND);
+    }
+
+    /**
+     * @param string|null $message
+     * @return Response
+     */
+    public static function unauthorized(?string $message = 'Unauthorized access'): Response
+    {
+        return self::error($message, Response::HTTP_UNAUTHORIZED);
+    }
+
+    /**
+     * @param string|null $message
+     * @return Response
+     */
+    public static function forbidden(?string $message = 'Access forbidden'): Response
+    {
+        return self::error($message, Response::HTTP_FORBIDDEN);
+    }
+
+    /**
+     * @param array $errors
+     * @param string|null $message
+     * @return Response
+     */
+    public static function validationError(array $errors, ?string $message = 'Validation failed'): Response
+    {
+        return self::error($message, Response::HTTP_UNPROCESSABLE_ENTITY, ['errors' => $errors]);
     }
 
     /**
